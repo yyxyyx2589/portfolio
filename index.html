@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>余毅轩 · AI Agent 应用开发 · 作品集</title>
+<meta name="description" content="AI Agent 应用开发工程师求职作品集：RAG 置信度决策路由、ReAct / LangGraph 双编排引擎、本地 LoRA 中间基线与三基线评测。"/>
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#f5f6f8;--card:#ffffff;--line:#e4e7ec;--line2:#eff1f4;
+  --ink:#16191d;--ink2:#525a63;--ink3:#878e97;
+  --brand:#1a56db;--brand2:#3b74f0;--brandsoft:#eef3ff;--brandline:#cfdcfb;
+  --ok:#15803d;--oksoft:#f0fdf4;--okline:#c3e8cf;
+  --warn:#9a5506;--warnsoft:#fff8e8;--warnline:#f2dcaa;
+  --radius:14px;
+}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:15.5px;line-height:1.75;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1000px;margin:0 auto;padding:0 22px 80px}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+code{background:#f1f3f6;border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:13px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+/* ---------- hero ---------- */
+.hero{padding:64px 0 34px;border-bottom:1px solid var(--line)}
+.hero .role{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--brand);font-weight:700;margin-bottom:14px}
+.hero h1{font-size:38px;line-height:1.22;margin:0 0 16px;letter-spacing:-.8px;font-weight:750}
+.hero h1 em{font-style:normal;color:var(--brand)}
+.hero .lede{font-size:17px;color:var(--ink2);max-width:660px;margin:0 0 22px}
+.hero .lede b{color:var(--ink);font-weight:650}
+.links{display:flex;gap:10px;flex-wrap:wrap}
+.link{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;
+  border-radius:99px;padding:7px 16px;font-size:13.5px;color:var(--ink2);transition:.15s}
+.link:hover{border-color:var(--brandline);color:var(--brand);background:var(--brandsoft);text-decoration:none}
+.link .d{width:6px;height:6px;border-radius:99px;background:var(--brand);flex:none}
+
+/* ---------- stat strip ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin:26px 0 0}
+.stats div{background:#fff;padding:16px 18px}
+.stats b{display:block;font-size:23px;font-weight:750;letter-spacing:-.5px;color:var(--brand);font-variant-numeric:tabular-nums}
+.stats span{font-size:12.5px;color:var(--ink3);display:block;margin-top:2px}
+
+/* ---------- sections ---------- */
+section{padding-top:52px}
+h2{font-size:22px;margin:0 0 6px;letter-spacing:-.3px;display:flex;align-items:center;gap:10px}
+h2 .n{display:inline-flex;width:26px;height:26px;border-radius:8px;background:var(--brand);color:#fff;
+  font-size:13px;align-items:center;justify-content:center;font-weight:700;flex:none}
+.sub{color:var(--ink2);font-size:14.5px;margin:0 0 20px;max-width:720px}
+
+/* ---------- method ---------- */
+.method{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px}
+.method .diagram{overflow-x:auto;margin:6px 0 16px}
+.method p{margin:0 0 12px;font-size:14.5px;color:var(--ink2)}
+.method p:last-child{margin-bottom:0}
+.method b{color:var(--ink);font-weight:650}
+
+/* ---------- work cards ---------- */
+.work{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px 28px;
+  margin-bottom:16px;position:relative;overflow:hidden;transition:.18s}
+.work:hover{border-color:var(--brandline);box-shadow:0 6px 26px rgba(26,86,219,.08)}
+.work::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--brand)}
+.work .head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.work h3{margin:0 0 4px;font-size:20px;letter-spacing:-.3px;font-weight:700}
+.work .en{font-size:13px;color:var(--ink3);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.badge{font-size:12px;border:1px solid var(--okline);background:var(--oksoft);color:var(--ok);
+  border-radius:99px;padding:3px 11px;white-space:nowrap;font-weight:600;flex:none}
+.work .pos{margin:12px 0 14px;font-size:15px;color:var(--ink2)}
+.work .pos b{color:var(--ink);font-weight:650}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px}
+.tag{font-size:12px;background:var(--brandsoft);color:var(--brand);border:1px solid var(--brandline);
+  padding:2px 10px;border-radius:99px}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:1px;background:var(--line2);
+  border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:0 0 16px}
+.metrics div{background:#fcfcfd;padding:11px 14px}
+.metrics b{display:block;font-size:17px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.3px}
+.metrics span{font-size:11.5px;color:var(--ink3);display:block;margin-top:1px}
+.work ul{margin:0 0 16px;padding-left:19px;font-size:14px;color:var(--ink2)}
+.work ul li{margin:3px 0}
+.work ul li b{color:var(--ink);font-weight:650}
+.wlinks{display:flex;gap:9px;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:14px}
+.wlinks a{font-size:13.5px;border:1px solid var(--line);border-radius:8px;padding:6px 14px;color:var(--ink2);transition:.15s}
+.wlinks a:hover{border-color:var(--brandline);color:var(--brand);background:var(--brandsoft);text-decoration:none}
+
+/* ---------- evidence table ---------- */
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;
+  border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+th,td{padding:13px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line2)}
+th{background:#f8f9fb;font-size:12.5px;color:var(--ink2);font-weight:650;white-space:nowrap;letter-spacing:.02em}
+tr:last-child td{border-bottom:0}
+td b{font-weight:650}
+td .ev{color:var(--ink2);font-size:13.5px}
+td .ev a{font-size:13.5px}
+
+/* ---------- article ---------- */
+.article{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;
+  display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}
+.article .ico{width:46px;height:46px;border-radius:11px;background:var(--brandsoft);border:1px solid var(--brandline);
+  display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;font-weight:750;color:var(--brand)}
+.article .body{flex:1;min-width:260px}
+.article h3{margin:0 0 6px;font-size:17px}
+.article p{margin:0 0 10px;font-size:14px;color:var(--ink2)}
+.article ol{margin:0;padding-left:20px;font-size:13.5px;color:var(--ink2)}
+.article ol li{margin:2px 0}
+
+/* ---------- honest ---------- */
+.honest{border-left:3px solid var(--warnline);background:var(--warnsoft);border-radius:0 12px 12px 0;padding:20px 24px}
+.honest h3{margin:0 0 10px;font-size:16px;color:var(--warn)}
+.honest ul{margin:0;padding-left:19px;font-size:14px;color:#6b4a12}
+.honest ul li{margin:5px 0}
+.honest ul li b{color:#4a3208}
+
+/* ---------- next ---------- */
+.next{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.next .item{background:#fff;border:1px dashed var(--line);border-radius:12px;padding:18px 20px}
+.next .item .st{font-size:11.5px;color:var(--ink3);letter-spacing:.05em;font-weight:650;text-transform:uppercase}
+.next .item h4{margin:6px 0 6px;font-size:15.5px}
+.next .item p{margin:0;font-size:13.5px;color:var(--ink2)}
+
+/* ---------- footer ---------- */
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--line);color:var(--ink3);font-size:13px}
+footer a{color:var(--ink2)}
+@media(max-width:700px){
+  .hero{padding-top:40px}
+  .hero h1{font-size:28px}
+  .hero .lede{font-size:15.5px}
+  .work{padding:20px 20px}
+  .method,.article{padding:20px 20px}
+  .wrap{padding:0 16px 60px}
+}
+@media print{
+  body{background:#fff}
+  .work,.method,.article,table{break-inside:avoid;box-shadow:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <div class="role">AI Agent 应用开发 · 作品集</div>
+    <h1>余毅轩<br/><em>不把「检索到」当成「可以答」。</em></h1>
+    <p class="lede">
+      2027 届计算机科学与技术本科。三个开源项目都在回答同一个问题：
+      <b>当模型不确定时，Agent 该怎么决策</b> —— 用检索置信度做路由信号，
+      决定「直答 / 走工具循环 / 拒答转人工」，而不是让大模型对所有问题都说点什么。
+    </p>
+    <div class="links">
+      <a class="link" href="https://github.com/yyxyyx2589" target="_blank" rel="noopener"><span class="d"></span>github.com/yyxyyx2589</a>
+      <a class="link" href="#works"><span class="d"></span>3 个开源作品</a>
+      <a class="link" href="#article"><span class="d"></span>技术长文</a>
+    </div>
+
+    <div class="stats">
+      <div><b>3</b><span>开源项目（全部 public）</span></div>
+      <div><b>2</b><span>套编排引擎，等价性可验证</span></div>
+      <div><b>100%</b><span>Agent 端到端解决率（21 题 ×3）</span></div>
+      <div><b>+7.2</b><span>LoRA 消融净增益（百分点）</span></div>
+    </div>
+  </header>
+
+  <!-- ============ 核心方法 ============ -->
+  <section id="method">
+    <h2><span class="n">1</span>核心方法：把置信度变成决策</h2>
+    <p class="sub">这套路由贯穿了下面三个项目。它不是"调了个阈值"，而是把检索分数从"参考信息"提升为"控制流信号"。</p>
+
+    <div class="method">
+      <div class="diagram">
+        <svg viewBox="0 0 900 208" width="100%" style="max-width:900px;min-width:640px" role="img"
+             aria-label="检索置信度三级路由示意图">
+          <defs>
+            <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
+              <path d="M0,0 L7,3.2 L0,6.4 z" fill="#9aa2ac"/>
+            </marker>
+          </defs>
+          <rect x="8" y="70" width="150" height="68" rx="11" fill="#eef3ff" stroke="#cfdcfb"/>
+          <text x="83" y="98" text-anchor="middle" font-size="14.5" font-weight="700" fill="#16191d" font-family="sans-serif">RAG 检索</text>
+          <text x="83" y="119" text-anchor="middle" font-size="12.5" fill="#525a63" font-family="sans-serif">sim + 关键词覆盖</text>
+
+          <line x1="162" y1="104" x2="212" y2="104" stroke="#9aa2ac" stroke-width="1.6" marker-end="url(#ah)"/>
+
+          <rect x="218" y="70" width="150" height="68" rx="11" fill="#fff" stroke="#e4e7ec"/>
+          <text x="293" y="98" text-anchor="middle" font-size="14.5" font-weight="700" fill="#16191d" font-family="sans-serif">路由判定</text>
+          <text x="293" y="119" text-anchor="middle" font-size="12.5" fill="#525a63" font-family="sans-serif">三级置信度</text>
+
+          <path d="M372,104 C400,104 400,42 432,42" stroke="#9aa2ac" stroke-width="1.6" fill="none" marker-end="url(#ah)"/>
+          <path d="M372,104 L432,104" stroke="#9aa2ac" stroke-width="1.6" fill="none" marker-end="url(#ah)"/>
+          <path d="M372,104 C400,104 400,166 432,166" stroke="#9aa2ac" stroke-width="1.6" fill="none" marker-end="url(#ah)"/>
+
+          <rect x="440" y="16" width="452" height="52" rx="11" fill="#f0fdf4" stroke="#c3e8cf"/>
+          <text x="460" y="39" font-size="14" font-weight="700" fill="#15803d" font-family="sans-serif">高置信 → 直答</text>
+          <text x="460" y="58" font-size="12.5" fill="#356b47" font-family="sans-serif">命中知识库，绕过循环直接作答，工具调用 0 次，右侧亮出溯源片段</text>
+
+          <rect x="440" y="78" width="452" height="52" rx="11" fill="#eef3ff" stroke="#cfdcfb"/>
+          <text x="460" y="101" font-size="14" font-weight="700" fill="#1a56db" font-family="sans-serif">中置信 → Agent 循环</text>
+          <text x="460" y="120" font-size="12.5" fill="#33508f" font-family="sans-serif">ReAct 自主调工具取证（查日志 / 查监控 / 诊断 / 检索），再给结论</text>
+
+          <rect x="440" y="140" width="452" height="52" rx="11" fill="#fff8e8" stroke="#f2dcaa"/>
+          <text x="460" y="163" font-size="14" font-weight="700" fill="#9a5506" font-family="sans-serif">低置信 → 拒答转人工</text>
+          <text x="460" y="182" font-size="12.5" fill="#7a5410" font-family="sans-serif">兜底文案 + 转人工，不编答案；资金安全类问题强制升级</text>
+        </svg>
+      </div>
+      <p><b>关键取舍：高置信不等于应当直答。</b> 知识库里有答案，不代表用户问的这件事只需要知识库 —— 「昨晚这台机器为什么变慢」可能既命中知识条目、又必须去查真实日志。所以路由是双向的：相似度决定"够不够像"，覆盖率和意图规则负责"该不该去查"。</p>
+      <p><b>第二层：编排引擎不是不可替换的。</b> 每个项目的 ReAct 主循环都有一份手写实现和一份 LangGraph 图编排实现，同签名、同事件协议，用固定剧本做逐步等价性对照 —— 这样"换框架"变成一次可验证的重构，而不是黑盒迁移。</p>
+    </div>
+  </section>
+
+  <!-- ============ 作品 ============ -->
+  <section id="works">
+    <h2><span class="n">2</span>三个开源作品</h2>
+    <p class="sub">依次是：运维场景的原始实现 → 迁移到银行坐席（同构换皮）→ 换到完全不同的领域（内容监控）。第三个刻意不复用前两个的骨架，用来证明这套方法不是只能套在一种业务上。</p>
+
+    <!-- bank-agent -->
+    <article class="work">
+      <div class="head">
+        <div>
+          <h3>银行远程坐席知识助手</h3>
+          <div class="en">bank-agent</div>
+        </div>
+        <span class="badge">已开源 · MIT</span>
+      </div>
+      <p class="pos">面向银行远程银行坐席的问答 Agent。核心是把「检索到就作答」改成<b>按置信度决定作答方式</b>，并对资金安全类问题做强制工具升级。</p>
+      <div class="tags">
+        <span class="tag">RAG 三级路由</span><span class="tag">ReAct + Function Calling</span>
+        <span class="tag">手写 / LangGraph 双引擎</span><span class="tag">Qwen2.5-1.5B + LoRA</span>
+        <span class="tag">PEFT / SFT 数据构造</span><span class="tag">FastAPI + SSE</span>
+      </div>
+      <div class="metrics">
+        <div><b>100%</b><span>Agent 端到端解决率</span></div>
+        <div><b>69.8%</b><span>纯 RAG 基线</span></div>
+        <div><b>66.7%</b><span>本地 1.5B+LoRA 基线</span></div>
+        <div><b>+7.2</b><span>LoRA 消融净增益</span></div>
+        <div><b>179</b><span>断言 / 5 个测试套件</span></div>
+      </div>
+      <ul>
+        <li><b>三基线对照</b>：同一条链路只换"谁来答"，纯 RAG 与本地小模型失败的<b>是同样 7 道题</b>，全是「答案不在知识库里」→ 结论落在知识边界与编排层，而不是模型大小。</li>
+        <li><b>消融实验</b>：同模型、同检索、同提示，唯一差别是不挂 adapter —— 59.5% → 66.7%，修好 3 道、弄差 0 道。证明 LoRA 学到的是"按坐席口径完整作答"这个行为。</li>
+        <li><b>防泄漏</b>：训练集与评估集做两道闸门（精确 + 相似度 ≥0.72 剔除），第一版只做精确剔除时剔了 0 条、看着干净，实际藏着 8 条近重复。</li>
+        <li><b>主动约束</b>：资金安全类问题不走概率路由，强制升级人工；工具白名单 + JSON 解析兜底 + 执行异常捕获三层防御链。</li>
+      </ul>
+      <div class="wlinks">
+        <a href="https://github.com/yyxyyx2589/bank-agent" target="_blank" rel="noopener">GitHub 仓库</a>
+        <a href="https://github.com/yyxyyx2589/bank-agent/blob/main/README.md" target="_blank" rel="noopener">README</a>
+        <a href="https://github.com/yyxyyx2589/bank-agent/blob/main/docs/%E6%8A%80%E6%9C%AF%E5%A4%8D%E7%9B%98.md" target="_blank" rel="noopener">技术复盘长文</a>
+      </div>
+    </article>
+
+    <!-- ops-agent -->
+    <article class="work">
+      <div class="head">
+        <div>
+          <h3>企业 IT 运维智能体</h3>
+          <div class="en">ops-agent</div>
+        </div>
+        <span class="badge">已开源</span>
+      </div>
+      <p class="pos">上面的银行项目是从这里<b>同构换皮</b>出来的。这个版本是方法论的原始形态：同一业务从 RAG 演进到 Agent，并把检索置信度正式升级为决策路由信号。</p>
+      <div class="tags">
+        <span class="tag">Function Calling</span><span class="tag">ReAct 主循环</span>
+        <span class="tag">LangGraph 图编排</span><span class="tag">ChromaDB 向量检索</span>
+        <span class="tag">SSE 流式</span><span class="tag">前端时间线 / 溯源面板</span>
+      </div>
+      <div class="metrics">
+        <div><b>5</b><span>可调用工具</span></div>
+        <div><b>10</b><span>双引擎等价性场景</span></div>
+        <div><b>552</b><span>真实日志条目</span></div>
+        <div><b>9075</b><span>监控指标点</span></div>
+      </div>
+      <ul>
+        <li><b>三级路由</b>：<code>sim≥0.70 且关键词覆盖率≥0.30</code> → RAG 直答；<code>0.45≤sim&lt;0.70</code> → Agent 循环；<code>sim&lt;0.45</code> → 拒答转人工。</li>
+        <li><b>工具是真调用的</b>：<code>query_log</code> 检索 72 小时 nginx 日志、<code>get_monitor_metrics</code> 读 9075 条指标、<code>run_diagnostic_command</code> 在白名单沙箱里真实执行系统命令。</li>
+        <li><b>双引擎可互换</b>：手写循环与 LangGraph 版同事件协议，10 个场景逐步对照，行为不漂移。</li>
+      </ul>
+      <div class="wlinks">
+        <a href="https://github.com/yyxyyx2589/ops-agent" target="_blank" rel="noopener">GitHub 仓库</a>
+        <a href="https://github.com/yyxyyx2589/ops-agent/blob/main/README.md" target="_blank" rel="noopener">README</a>
+      </div>
+    </article>
+
+    <!-- xhs_monitor -->
+    <article class="work">
+      <div class="head">
+        <div>
+          <h3>小红书公开内容监控 Agent</h3>
+          <div class="en">xhs_monitor</div>
+        </div>
+        <span class="badge">已开源</span>
+      </div>
+      <p class="pos">换到完全不同的领域：定时监控公开笔记与作者主页，做增量判断、规则 + LLM 混合分析、告警去重与<b>风险自适应调度</b>。这个项目的重点是工程约束下的诚实。</p>
+      <div class="tags">
+        <span class="tag">风险状态机</span><span class="tag">增量抓取</span>
+        <span class="tag">规则 + LLM 混合</span><span class="tag">Provider 抽象</span>
+        <span class="tag">PostgreSQL / Alembic</span><span class="tag">Docker</span>
+      </div>
+      <div class="metrics">
+        <div><b>17</b><span>单元测试通过</span></div>
+        <div><b>3</b><span>评测基线对照</span></div>
+        <div><b>120s</b><span>全局最小请求间隔</span></div>
+        <div><b>100%</b><span>意图任务漏接率（发现的问题）</span></div>
+      </div>
+      <ul>
+        <li><b>执行流是确定性的</b>：规则规划器 → 风控门控 → 采集 → ETag / 内容哈希增量 → 混合识别 → 路由 → 告警。LLM 不控制抓取循环，只理解"已经发生变化的公开内容"。</li>
+        <li><b>风险控制落到参数</b>：全局 120 秒最小间隔、周期 ±20% 抖动、跳过凌晨低收益时段、来源日预算、429 遵守 Retry-After、403 与验证码进 24 小时冷却、连续三次异常熔断。</li>
+        <li><b>用评测发现自己代码的错</b>：固定标注集上跑三基线，结论是现有分析器在"评论购买意向"任务上<b>漏接率 100%</b> —— 因为它会把非负面的高相关内容主动降级。这是评测暴露出的真实缺陷，已定位到具体函数。</li>
+      </ul>
+      <div class="wlinks">
+        <a href="https://github.com/yyxyyx2589/xhs_monitor" target="_blank" rel="noopener">GitHub 仓库</a>
+        <a href="https://github.com/yyxyyx2589/xhs_monitor/blob/main/README.md" target="_blank" rel="noopener">README</a>
+      </div>
+    </article>
+  </section>
+
+  <!-- ============ 能力与证据 ============ -->
+  <section id="evidence">
+    <h2><span class="n">3</span>能力与证据对照</h2>
+    <p class="sub">不写"熟悉 / 了解"，每条能力都指向一个可以在代码里点开的位置。</p>
+    <table>
+      <thead>
+        <tr><th style="width:23%">能力</th><th style="width:44%">具体做法</th><th style="width:33%">可验证的位置</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>检索增强与置信度校准</b></td>
+          <td class="ev">ChromaDB + sentence-transformers 向量检索，手算余弦相似度（Chroma 返回的是平方 L2）；阈值随语料重新标定，而不是沿用默认值</td>
+          <td class="ev"><a href="https://github.com/yyxyyx2589/bank-agent" target="_blank" rel="noopener">bank-agent</a> / <a href="https://github.com/yyxyyx2589/ops-agent" target="_blank" rel="noopener">ops-agent</a> 的 router</td>
+        </tr>
+        <tr>
+          <td><b>Agent 编排与工具边界</b></td>
+          <td class="ev">Function Calling 主循环 + 三层防御链；工具可达性专门验证（一个精心设计的话术曾因置信度太低而永远走不到转人工工具）；双引擎等价性用固定剧本证明</td>
+          <td class="ev">两家仓库的 <code>agent.py</code> / <code>agent_langgraph.py</code> / <code>tests/</code></td>
+        </tr>
+        <tr>
+          <td><b>模型微调（LoRA / SFT）</b></td>
+          <td class="ev">Qwen2.5-1.5B-Instruct + PEFT LoRA（r=16）；训练 messages 与推理提示逐字同构，否则模型会退化成忽略检索片段的"直答器"；completion-only loss mask</td>
+          <td class="ev"><a href="https://github.com/yyxyyx2589/bank-agent/tree/main/training" target="_blank" rel="noopener">bank-agent/training</a></td>
+        </tr>
+        <tr>
+          <td><b>评测设计（含自我证伪）</b></td>
+          <td class="ev">三基线 + 消融 + 重复运行看稳定性；两次发现自己的评估集标注过松（靠子串命中拿假满分）；训练数据做两道泄漏闸门</td>
+          <td class="ev">各仓库 <code>eval.py</code>、<code>reports/</code>、<code>evals/</code></td>
+        </tr>
+        <tr>
+          <td><b>服务化与工程化</b></td>
+          <td class="ev">FastAPI + SSE 流式；SQLite / PostgreSQL 会话与状态持久化；Alembic 迁移；Docker Compose 一键起；CLI + 看板双入口</td>
+          <td class="ev">三仓库的 <code>server.py</code> / <code>api/</code> / <code>docker-compose.yml</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ 文章 ============ -->
+  <section id="article">
+    <h2><span class="n">4</span>技术长文</h2>
+    <div class="article">
+      <div class="ico">文</div>
+      <div class="body">
+        <h3>《瓶颈不是模型大小，是知识边界》</h3>
+        <p>约 3900 字。不复述项目功能，只写<b>过程与取舍</b>：为什么选这个场景、四个关键判断，以及六个真踩过的坑。</p>
+        <ol>
+          <li>一个精心设计的工具曾经是<b>死代码</b> —— 功能写完 ≠ 功能可达</li>
+          <li>评估集标注太松，等于给自己发假成绩</li>
+          <li>"我训了 LoRA"和"LoRA 带来了多少"是两件事</li>
+          <li>只有截图能抓到的前端多轮渲染缺陷</li>
+        </ol>
+        <div class="wlinks" style="border:0;padding-top:12px">
+          <a href="https://github.com/yyxyyx2589/bank-agent/blob/main/docs/%E6%8A%80%E6%9C%AF%E5%A4%8D%E7%9B%98.md" target="_blank" rel="noopener">在 GitHub 阅读全文</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 诚实边界 ============ -->
+  <section id="honest">
+    <h2><span class="n">5</span>诚实边界</h2>
+    <p class="sub">把"没做到什么"写在明处，比让面试官自己发现要划算。</p>
+    <div class="honest">
+      <h3>这些是演示原型，不是生产系统</h3>
+      <ul>
+        <li><b>数据是构造的</b>：银行项目的知识库与工单由脚本生成；运维项目的日志与监控指标由脚本确定性重建。刻意不用任何真实客户数据。</li>
+        <li><b>没有真实用户量验证</b>：所有评测都是固定测试集上的可复现结果，不代表线上表现。</li>
+        <li><b>内容监控项目主动关闭了一个能力</b>：因为没有官方授权数据源，站内关键词全网发现明确置为 disabled，并在界面上主动声明。同时明确不做代理轮换、签名伪造、账号池或验证码绕过。</li>
+        <li><b>银行项目是运维项目的同构换皮</b>：这件事写在它的 README 里。它证明的是方法可迁移，不是两个从零开始的独立项目。</li>
+        <li><b>还没做的</b>：真实业务系统对接、线上监控与灰度、多轮长对话的记忆压缩。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 接下来 ============ -->
+  <section id="next">
+    <h2><span class="n">6</span>接下来</h2>
+    <div class="next">
+      <div class="item">
+        <div class="st">筹备中</div>
+        <h4>电动车二分类视觉检测</h4>
+        <p>把方向从"文本 Agent"扩到"视觉"，用 YOLO 做二分类检测，补齐感知层的工程经验。</p>
+      </div>
+      <div class="item">
+        <div class="st">计划中</div>
+        <h4>求职流程自动化工具</h4>
+        <p>解决自己真实痛点的自动填表与信息提取工具，处理后整理开源。</p>
+      </div>
+      <div class="item">
+        <div class="st">持续</div>
+        <h4>把坑写成文章</h4>
+        <p>每个项目收口时产出一篇带数据的复盘，而不是只留一个仓库。</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>余毅轩 · 2027 届计算机科学与技术 · 目标岗位：AI Agent 应用开发 / 大模型应用工程师</p>
+    <p>本页引用的所有数字均可在对应仓库的 <code>README</code>、<code>reports/</code> 与测试中复核。最后更新：2026-10-15。</p>
+    <p><a href="https://github.com/yyxyyx2589" target="_blank" rel="noopener">github.com/yyxyyx2589</a></p>
+  </footer>
+
+</div>
+</body>
+</html>
